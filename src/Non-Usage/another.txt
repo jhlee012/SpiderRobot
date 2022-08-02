@@ -1,0 +1,33 @@
+#include <Servo.h>
+
+Servo myServo1;
+Servo myServo2;
+
+void setup() {
+    myServo1.attach(2);
+    myServo2.attach(3);
+    myServo1.write(50);
+    myServo2.write(0);
+    delay(500);
+}
+
+void loop() {
+    for (int i = 0; i <= 180; i+=20) {
+        myServo2.write(i);
+        if (myServo1.read() == 100) {
+            myServo1.write(50);
+        } else {
+            myServo1.write(100);
+        }
+        delay(200);
+    }
+    for (int i = 180; i >= 0; i-=30) {
+        myServo2.write(i);
+        if (myServo1.read() == 100) {
+            myServo1.write(50);
+        } else {
+            myServo1.write(100);
+        }
+        delay(200);
+    }
+}
