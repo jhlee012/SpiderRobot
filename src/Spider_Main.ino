@@ -10,7 +10,7 @@ SerialCommand SCmd;   // 송수신 값 넣는 스토리지
 #include <NewPing.h> // 개선된 초음파 센서 라이브러리 
 
 
-#include <main_led.h> //기본 LED 컨트롤 라이브러리 ;
+#include <main_led.h> // 기본 LED 컨트롤 라이브러리 
 #include <Adafruit_NeoPixel.h> //NeoPixel LED 컨트롤 라이브러리
 
 // 서보 핀 설정 
@@ -67,6 +67,11 @@ boolean freewalk_mode=false;
 unsigned int avoid_dist=25;
 NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
         //sonar(Trig, Echo, 감지범위);
+
+
+
+//기본 LED컨트롤 선언
+LEDControl ledMain;
 
 void setup()
 {
