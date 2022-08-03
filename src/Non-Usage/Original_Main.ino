@@ -95,12 +95,12 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 
 
 
-//기본 LED컨트롤 선언
+/* //기본 LED컨트롤 선언
 LEDControl ledMain;
 
 #ifdef TEST
   ServoControl servoMain; //main_led.h ServoControl Class | Deprecate this anytime when it is useless
-#endif 
+#endif */
 
 void setup()
 {
@@ -148,7 +148,8 @@ void setup()
   Serial.println("Servos initialized");
   Serial.println("Robot initialization Complete");
 
-  ledMain.All_PixelChange(0, 150, 0, true);  // 처음 시작 시 초록색으로 설정
+/*   //초기 LED 점등 설정
+  ledMain.All_PixelChange(0, 150, 0, true); */
 
 
   pinMode(TRIGGER_PIN, OUTPUT); // trig에서 신호를 보내는 설정
@@ -201,23 +202,18 @@ void check_obstacle(unsigned int dist) {
     Serial.println("cm");
     ping_range=sonar.ping_cm();
     if ((ping_range<dist) and (ping_range!=0)) {
-
-      ledMain.All_PixelChange(255, 0, 0, true);
-
-      // stand
-      Serial.println("Wake up");
-      stand();          
-      // wave
-      Serial.println("Shake");
-      hand_shake(2);
-      // turn
-      //Serial.println("Turn");
-      //turn_left(5);
-      // sit
-      Serial.println("Sit");
-      sit();
-
-      ledMain.All_PixelChange(0,255,0,true);
+          // stand
+          Serial.println("Wake up");
+          stand();          
+          // wave
+          Serial.println("Shake");
+          hand_shake(2);
+          // turn
+          //Serial.println("Turn");
+          //turn_left(5);
+          // sit
+          Serial.println("Sit");
+          sit();
     }
 }
 
@@ -354,7 +350,7 @@ void action_cmd(void)
 //일치하는 명령어가 없다면 다음 함수를 기본적으로 수행. 
 void unrecognized(const char *command) {
   Serial.println("What?");
-  ledMain.All_PixelChange(255, 0, 0, true); 
+/*   ledMain.All_PixelChange(150, 0, 0, true); */
 }
 
 void freewalk(unsigned int dist) { 
@@ -766,10 +762,6 @@ void hand_wave(int i)
   float y_tmp;
   float z_tmp;
   move_speed = 1;
-
-  ledMain.WaveRGB(0, 5);
-  ledMain.WaveRGB(1,5);
-
   if (site_now[3][1] == y_start)
   {
     body_right(15);
@@ -817,10 +809,6 @@ void hand_shake(int i)
   float y_tmp;
   float z_tmp;
   move_speed = 1;
-
-  ledMain.WaveRGB(0, 5);
-  ledMain.WaveRGB(1,5);
-
   if (site_now[3][1] == y_start)
   {
     body_right(15);
@@ -889,8 +877,6 @@ void body_dance(int i)
   float y_tmp;
   float z_tmp;
   float body_dance_speed = 2;
-  ledMain.WaveRGB(0, 10);
-  ledMain.WaveRGB(1,10);
   sit();
   move_speed = 1;
   set_site(0, x_default, y_default, KEEP);
@@ -925,10 +911,6 @@ void body_dance(int i)
   }
   move_speed = body_dance_speed;
   head_down(30);
-}
-
-void devjh(void) {
-  Serial.println("Team 5 is sibal"); //이주혁 왔다감
 }
 
 /*
