@@ -1,3 +1,7 @@
+//조교님이 C수업할때 시켰던 코드 (서보모터 두개 동시작동)
+
+//myServo.read() 함수 사용
+
 #include <Servo.h>
 
 Servo myServo1;

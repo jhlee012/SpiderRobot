@@ -35,9 +35,6 @@ SerialCommand SCmd;   // 송수신 값 넣는 스토리지
 #include <NewPing.h> // 개선된 초음파 센서 라이브러리 
 
 
-#include <main_led.h> // 기본 LED 컨트롤 라이브러리 
-#include <Adafruit_NeoPixel.h> //NeoPixel LED 컨트롤 라이브러리
-
 // 서보 핀 설정 
 Servo servo[4][3]; //서보모터 핀 배열을 이용하여 값 설정
 const int servo_pin[4][3] = { {2, 3, 4}, {5, 6, 7}, {8, 9, 10}, {11, 12, 13} };
@@ -148,8 +145,6 @@ void setup()
   Serial.println("Servos initialized");
   Serial.println("Robot initialization Complete");
 
-/*   //초기 LED 점등 설정
-  ledMain.All_PixelChange(0, 150, 0, true); */
 
 
   pinMode(TRIGGER_PIN, OUTPUT); // trig에서 신호를 보내는 설정

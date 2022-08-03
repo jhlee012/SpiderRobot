@@ -102,6 +102,8 @@ LEDControl ledMain;
   ServoControl servoMain; //main_led.h ServoControl Class | Deprecate this anytime when it is useless
 #endif 
 
+#define DEF_BIRGHTNESS 100
+
 void setup()
 {
   //디버깅을 위한 시리얼통신 시작
@@ -149,6 +151,7 @@ void setup()
   Serial.println("Robot initialization Complete");
 
   ledMain.All_PixelChange(0, 150, 0, true);  // 처음 시작 시 초록색으로 설정
+  ledMain.brightness(0, DEF_BIRGHTNESS); //default '==
 
 
   pinMode(TRIGGER_PIN, OUTPUT); // trig에서 신호를 보내는 설정
@@ -202,7 +205,8 @@ void check_obstacle(unsigned int dist) {
     ping_range=sonar.ping_cm();
     if ((ping_range<dist) and (ping_range!=0)) {
 
-      ledMain.All_PixelChange(255, 0, 0, true);
+      ledMain.All_PixelChange(255, 0, 255, true); //장애물 감지 시 보라색 (#FF00FF) 로 변경
+      ledMain.brightness(0, 200);
 
       // stand
       Serial.println("Wake up");
@@ -217,13 +221,35 @@ void check_obstacle(unsigned int dist) {
       Serial.println("Sit");
       sit();
 
-      ledMain.All_PixelChange(0,255,0,true);
+      ledMain.All_PixelChange(0,255,0,true); //작업 종료 후 다시 디폴트값인 초록색으로 변경
+      ledMain.brightness(0, DEF_BIRGHTNESS);
     }
 }
 
-
-void do_test(void)
+/**
+ * @brief do_test 함수 - 실행 사항 (각 항목 간 딜레이 2000ms (2s))
+ * 1. 일어서기
+ * 2. 앞으로 가기
+ * 3. 뒤로 가기
+ * 4. 왼쪽으로 둘기
+ * 5. 오른쪽으로 돌기
+ * 6. 손 흔들기 (hand_wave)
+ * 7. 손 흔들기 (hand_shake)
+ * 8. 몸 흔들기 (body_dance)
+ * 9. 앉기 
+ * 
+ * 
+ * @brief 개인적 추가 사항
+ * do test 시작 시 0, 255, 255 (#00ffff) 로 LED 점등 with 최대밝기
+ * 테스트 종료 시 0, 255, 0으로 재변경
+ */
+void do_test(void) 
 {
+  Serial.println("Test Start");
+
+  ledMain.All_PixelChange(0, 255, 255, true); //컬러 변경 및 점등
+  ledMain.brightness(0, 150); //밝기 변경 (decider 0 , means all)
+
   Serial.println("Stand");
   stand();
   delay(2000);
@@ -251,6 +277,11 @@ void do_test(void)
   Serial.println("Sit");
   sit();
   delay(5000);
+
+  Serial.println("Test End.");
+
+  ledMain.All_PixelChange(0, 255, 0, true);
+  ledMain.brightness(0, DEF_BIRGHTNESS);
 }
   
 // 움직임 제어 signal 0-6
@@ -455,6 +486,10 @@ void stand(void)
 void turn_left(unsigned int step)
 {
   move_speed = spot_turn_speed;
+
+  ledMain.Range_PixelChange(0, 1, 6, 255, 0, 0, true); //0 - 6픽셀 붉은색 점등;
+  ledMain.Range_PixelChange(1, 1, 6, 255, 0, 0, true);
+
   while (step-- > 0)
   {
     if (site_now[3][1] == y_start)
@@ -524,15 +559,26 @@ void turn_left(unsigned int step)
       wait_all_reach();
     }
   }
-}
 
+  ledMain.All_PixelChange(0, 255, 0, true); //초록색 
+
+  if (!ledMain.check_brightness(0, DEF_BIRGHTNESS)) //기본 밝기로
+    ledMain.brightness(0, DEF_BIRGHTNESS);
+
+//아니짆짜엏이가없넷ㅂ왜!=야!==가아니곳ㅄ비ㅣㅏㅇㄹㄴㅁㄹ이ㅏ멍리어이가없네
 /*
   - spot turn to right
   - blocking function
   - parameter step steps wanted to turn
-*/
+*/}
+
+//우측으로 돌기
 void turn_right(unsigned int step)
 {
+
+  ledMain.Range_PixelChange(0, 7, 12, 255, 0, 0, true); //7 - 12픽셀 붉은색 점등;
+  ledMain.Range_PixelChange(1, 7, 12, 255, 0, 0, true);
+
   move_speed = spot_turn_speed;
   while (step-- > 0)
   {
@@ -603,6 +649,11 @@ void turn_right(unsigned int step)
       wait_all_reach();
     }
   }
+
+  ledMain.All_PixelChange(0, 255, 0, true); //초록색 
+
+  if (!ledMain.check_brightness(0, DEF_BIRGHTNESS)) //기본 밝기로
+    ledMain.brightness(0, DEF_BIRGHTNESS);
 }
 
 /*

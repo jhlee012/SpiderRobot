@@ -1,3 +1,5 @@
+//대충 180도 왔다갔다하는 코드
+
 /* #include <Servo.h>
 
 Servo myServo;
