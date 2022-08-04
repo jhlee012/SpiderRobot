@@ -396,8 +396,8 @@ void unrecognized(const char *command) {
   ledMain.All_PixelChange(255, 0, 0, true); 
 }
 
-void freewalk(unsigned int dist) { //자율주행 직진 시작 시 하늘색으로 변경
-   ledMain.All_PixelChange(0, 255, 255, true);
+void freewalk(unsigned int dist) { 
+   ledMain.All_PixelChange(0, 255, 255, true);   //자율주행 직진 시작 시 하늘색으로 변경 (루프 걸려있음)
    ledMain.brightness(0, DEF_BRIGHTNESS); 
   
   unsigned int ping_range; //거리값을 받을 변수 설정
