@@ -4,7 +4,6 @@
  * 방법 : [스케치]-[라이브러리 포함하기]-[.ZIP파일 라이브러리 추가]
  */
 
-#define TEST
 /**
  * Test Case, Define "TEST"
  * 
@@ -36,7 +35,7 @@ SerialCommand SCmd;   // 송수신 값 넣는 스토리지
 
 
 #include <main_led.h> // 기본 LED 컨트롤 라이브러리 
-#include <Adafruit_NeoPixel.h> //NeoPixel LED 컨트롤 라이브러리
+#include <Adafruit_NeoPixel.h>
 
 // 서보 핀 설정 
 Servo servo[4][3]; //서보모터 핀 배열을 이용하여 값 설정
@@ -98,12 +97,8 @@ NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
 //기본 LED컨트롤 선언
 LEDControl ledMain;
 
-#ifdef TEST
-  ServoControl servoMain; //main_led.h ServoControl Class | Deprecate this anytime when it is useless
-#endif 
 
-#define DEF_BIRGHTNESS 100
-
+#define DEF_BRIGHTNESS 100
 void setup()
 {
   //디버깅을 위한 시리얼통신 시작
@@ -150,8 +145,18 @@ void setup()
   Serial.println("Servos initialized");
   Serial.println("Robot initialization Complete");
 
-  ledMain.All_PixelChange(0, 150, 0, true);  // 처음 시작 시 초록색으로 설정
-  ledMain.brightness(0, DEF_BIRGHTNESS); //default '==
+
+  ledMain.begin();
+  delay(300);
+  ledMain.clear();
+
+  if (freewalk_mode == true) {
+      ledMain.All_PixelChange(162, 249,255, true);  // 자율주행 시작 시 파란색으로 설정
+      ledMain.brightness(0, DEF_BRIGHTNESS); //default 
+  } else {
+      ledMain.All_PixelChange(0,150,0, true);  // 처음 시작 시 초록색으로 설정
+      ledMain.brightness(0, DEF_BRIGHTNESS); //default 
+  }
 
 
   pinMode(TRIGGER_PIN, OUTPUT); // trig에서 신호를 보내는 설정
@@ -221,8 +226,11 @@ void check_obstacle(unsigned int dist) {
       Serial.println("Sit");
       sit();
 
-      ledMain.All_PixelChange(0,255,0,true); //작업 종료 후 다시 디폴트값인 초록색으로 변경
-      ledMain.brightness(0, DEF_BIRGHTNESS);
+      if (freewalk_mode == true) 
+        ledMain.All_PixelChange(0,255,255,true);
+      else
+        ledMain.All_PixelChange(0, 255, 0, true);
+      ledMain.brightness(0, DEF_BRIGHTNESS);
     }
 }
 
@@ -281,7 +289,7 @@ void do_test(void)
   Serial.println("Test End.");
 
   ledMain.All_PixelChange(0, 255, 0, true);
-  ledMain.brightness(0, DEF_BIRGHTNESS);
+  ledMain.brightness(0, DEF_BRIGHTNESS);
 }
   
 // 움직임 제어 signal 0-6
@@ -388,7 +396,10 @@ void unrecognized(const char *command) {
   ledMain.All_PixelChange(255, 0, 0, true); 
 }
 
-void freewalk(unsigned int dist) { 
+void freewalk(unsigned int dist) { //자율주행 직진 시작 시 하늘색으로 변경
+   ledMain.All_PixelChange(0, 255, 255, true);
+   ledMain.brightness(0, DEF_BRIGHTNESS); 
+  
   unsigned int ping_range; //거리값을 받을 변수 설정
   ping_range=sonar.ping_cm(); // 초음파센서에서 받은 거리 값을 변수 ping_range에 저장
   // 20cm 전에 방향전환
@@ -406,13 +417,18 @@ void freewalk(unsigned int dist) {
 }
 
 // 자율주행모드
+//자율주행모드 시 하늘색으로 변경, 자율주행모드 오프 시 초록색으로 변환
 void do_freewalk(void) {
   if (freewalk_mode==false) {
     Serial.println("FreeWalk ON");
     freewalk_mode=true;
+    ledMain.All_PixelChange(0, 255, 255, true);
+    ledMain.brightness(0, DEF_BRIGHTNESS);
   } else {
     Serial.println("FreeWalk OFF");
     freewalk_mode=false;
+    ledMain.All_PixelChange(0, 150, 0, true);
+    ledMain.brightness(0, DEF_BRIGHTNESS);
   }
 }
 
@@ -487,8 +503,14 @@ void turn_left(unsigned int step)
 {
   move_speed = spot_turn_speed;
 
+  /*
+
   ledMain.Range_PixelChange(0, 1, 6, 255, 0, 0, true); //0 - 6픽셀 붉은색 점등;
   ledMain.Range_PixelChange(1, 1, 6, 255, 0, 0, true);
+
+  */
+
+  ledMain.All_PixelChange(255, 255, 0, true);
 
   while (step-- > 0)
   {
@@ -559,11 +581,13 @@ void turn_left(unsigned int step)
       wait_all_reach();
     }
   }
+  if(freewalk_mode == true)
+    ledMain.All_PixelChange(0, 255, 255, true);
+  else
+    ledMain.All_PixelChange(0, 255, 0, true); //초록색 
 
-  ledMain.All_PixelChange(0, 255, 0, true); //초록색 
-
-  if (!ledMain.check_brightness(0, DEF_BIRGHTNESS)) //기본 밝기로
-    ledMain.brightness(0, DEF_BIRGHTNESS);
+  if (!ledMain.check_brightness(0, DEF_BRIGHTNESS)) //기본 밝기로
+    ledMain.brightness(0, DEF_BRIGHTNESS);
 
 //아니짆짜엏이가없넷ㅂ왜!=야!==가아니곳ㅄ비ㅣㅏㅇㄹㄴㅁㄹ이ㅏ멍리어이가없네
 /*
@@ -576,8 +600,15 @@ void turn_left(unsigned int step)
 void turn_right(unsigned int step)
 {
 
+  /*
+
   ledMain.Range_PixelChange(0, 7, 12, 255, 0, 0, true); //7 - 12픽셀 붉은색 점등;
   ledMain.Range_PixelChange(1, 7, 12, 255, 0, 0, true);
+
+  */
+
+  ledMain.All_PixelChange(255,255,0, true);
+  
 
   move_speed = spot_turn_speed;
   while (step-- > 0)
@@ -650,10 +681,13 @@ void turn_right(unsigned int step)
     }
   }
 
-  ledMain.All_PixelChange(0, 255, 0, true); //초록색 
+  if(freewalk_mode == true)
+    ledMain.All_PixelChange(0, 255, 255, true);
+  else
+    ledMain.All_PixelChange(0, 255, 0, true); //초록색 
 
-  if (!ledMain.check_brightness(0, DEF_BIRGHTNESS)) //기본 밝기로
-    ledMain.brightness(0, DEF_BIRGHTNESS);
+  if (!ledMain.check_brightness(0, DEF_BRIGHTNESS)) //기본 밝기로
+    ledMain.brightness(0, DEF_BRIGHTNESS);
 }
 
 /*
@@ -730,6 +764,8 @@ void step_forward(unsigned int step)
 */
 void step_back(unsigned int step)
 {
+  ledMain.All_PixelChange(255, 0,0, true);
+  
   move_speed = leg_move_speed;
   while (step-- > 0)
   {
@@ -788,6 +824,13 @@ void step_back(unsigned int step)
       wait_all_reach();
     }
   }
+
+   if(freewalk_mode == true)
+    ledMain.All_PixelChange(0, 255, 255, true);
+  else
+    ledMain.All_PixelChange(0, 255, 0, true); //초록색 
+
+   ledMain.brightness(0, DEF_BRIGHTNESS);
 }
 
 // add by RegisHsu
@@ -818,8 +861,6 @@ void hand_wave(int i)
   float z_tmp;
   move_speed = 1;
 
-  ledMain.WaveRGB(0, 5);
-  ledMain.WaveRGB(1,5);
 
   if (site_now[3][1] == y_start)
   {
@@ -868,9 +909,6 @@ void hand_shake(int i)
   float y_tmp;
   float z_tmp;
   move_speed = 1;
-
-  ledMain.WaveRGB(0, 5);
-  ledMain.WaveRGB(1,5);
 
   if (site_now[3][1] == y_start)
   {
@@ -940,8 +978,6 @@ void body_dance(int i)
   float y_tmp;
   float z_tmp;
   float body_dance_speed = 2;
-  ledMain.WaveRGB(0, 10);
-  ledMain.WaveRGB(1,10);
   sit();
   move_speed = 1;
   set_site(0, x_default, y_default, KEEP);
@@ -979,7 +1015,7 @@ void body_dance(int i)
 }
 
 void devjh(void) {
-  Serial.println("Team 5 is sibal"); //이주혁 왔다감
+  Serial.println("Team 5 is <CENSORED>"); //이주혁 왔다감
 }
 
 /*
