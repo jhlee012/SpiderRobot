@@ -4,11 +4,11 @@
 > Adafruit_NeoPixel.h [Main lED Headerfile, with main_led's class constructor]
 
 **Author**
-> Dev.Jh
+> jhlee012
 
 **Contributors**
 > All Team-5 Members
 > Adafruit's
 
 **Copyrights**
-> Copyright 2022. DevJh All rights reserved. 
+> Copyright 2022. J.LEE, Adafruit, All rights reserved. 
